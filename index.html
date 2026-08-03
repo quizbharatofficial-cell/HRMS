@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SELF HRMS - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>SELF HRMS</h1>
+    <p>Payroll & Attendance System</p>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="page-heading">
+    <h2>Dashboard</h2>
+    <p>Employee, attendance and payroll overview</p>
+  </section>
+
+  <section class="dashboard-grid">
+
+    <div class="stat-card">
+      <span>Total Employees</span>
+      <strong id="totalEmployees">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Present</span>
+      <strong id="presentCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Absent</span>
+      <strong id="absentCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Leave</span>
+      <strong id="leaveCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Weekly Off</span>
+      <strong id="woCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Holiday</span>
+      <strong id="holidayCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Late</span>
+      <strong id="lateCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>OT Hours</span>
+      <strong id="otCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Payroll Generated</span>
+      <strong id="payrollGenerated">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Payroll Pending</span>
+      <strong id="payrollPending">0</strong>
+    </div>
+
+  </section>
+
+  <section class="module-section">
+
+    <h2>Modules</h2>
+
+    <div class="module-grid">
+
+      <a href="employees.html" class="module-card">
+        <span class="module-icon">👥</span>
+        <strong>Employees</strong>
+      </a>
+
+      <a href="attendance.html" class="module-card">
+        <span class="module-icon">🕒</span>
+        <strong>Attendance</strong>
+      </a>
+
+      <a href="monthly-attendance.html" class="module-card">
+        <span class="module-icon">📅</span>
+        <strong>Monthly Attendance</strong>
+      </a>
+
+      <a href="leave.html" class="module-card">
+        <span class="module-icon">📝</span>
+        <strong>Leave</strong>
+      </a>
+
+      <a href="holiday.html" class="module-card">
+        <span class="module-icon">🏖️</span>
+        <strong>Holiday</strong>
+      </a>
+
+      <a href="payroll.html" class="module-card">
+        <span class="module-icon">💰</span>
+        <strong>Payroll</strong>
+      </a>
+
+      <a href="salary-slip.html" class="module-card">
+        <span class="module-icon">📄</span>
+        <strong>Salary Slip</strong>
+      </a>
+
+      <a href="history.html" class="module-card">
+        <span class="module-icon">🗂️</span>
+        <strong>History</strong>
+      </a>
+
+      <a href="reports.html" class="module-card">
+        <span class="module-icon">📊</span>
+        <strong>Reports</strong>
+      </a>
+
+      <a href="settings.html" class="module-card">
+        <span class="module-icon">⚙️</span>
+        <strong>Settings</strong>
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script src="js/storage.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>

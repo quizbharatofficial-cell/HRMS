@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance - SELF HRMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>SELF HRMS</h1>
+    <p>Attendance Management</p>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="page-heading">
+    <h2>Attendance</h2>
+    <p>Daily attendance, working hours and overtime</p>
+  </div>
+
+  <div class="actions-bar">
+    <a href="index.html" class="btn btn-secondary">← Dashboard</a>
+  </div>
+
+  <section class="form-card">
+    <form id="attendanceForm">
+
+      <input type="hidden" id="recordId">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Employee *</label>
+          <select id="employeeId" required>
+            <option value="">Select Employee</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Date *</label>
+          <input type="date" id="attendanceDate" required>
+        </div>
+
+        <div class="field">
+          <label>Shift</label>
+          <input id="shift" placeholder="Shift name">
+        </div>
+
+        <div class="field">
+          <label>Shift Hours *</label>
+          <input type="number" id="shiftHours"
+                 min="0" step="0.01" required>
+        </div>
+
+        <div class="field">
+          <label>In Time</label>
+          <input type="time" id="inTime">
+        </div>
+
+        <div class="field">
+          <label>Out Time</label>
+          <input type="time" id="outTime">
+        </div>
+
+        <div class="field">
+          <label>Break (Minutes)</label>
+          <input type="number" id="breakMinutes"
+                 min="0" step="1">
+        </div>
+
+        <div class="field">
+          <label>Working Hours</label>
+          <input id="workingHours" readonly>
+        </div>
+
+        <div class="field">
+          <label>OT Hours</label>
+          <input id="otHours" readonly>
+        </div>
+
+        <div class="field">
+          <label>Status *</label>
+          <select id="attendanceStatus" required>
+            <option value="P">Present (P)</option>
+            <option value="A">Absent (A)</option>
+            <option value="HD">Half Day (HD)</option>
+            <option value="EL">Earned Leave (EL)</option>
+            <option value="CL">Casual Leave (CL)</option>
+            <option value="SL">Sick Leave (SL)</option>
+            <option value="WO">Weekly Off (WO)</option>
+            <option value="Holiday">Holiday</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Remarks</label>
+          <input id="remarks">
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary"
+                id="saveBtn"
+                type="submit">
+          Save Attendance
+        </button>
+
+        <button class="btn btn-secondary"
+                id="clearBtn"
+                type="button">
+          Clear
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+  <section class="table-card">
+
+    <div class="table-header">
+      <h3>Attendance Records</h3>
+
+      <input type="search"
+             id="attendanceSearch"
+             placeholder="Search employee/date/status">
+    </div>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Employee</th>
+            <th>Shift</th>
+            <th>In</th>
+            <th>Out</th>
+            <th>Break</th>
+            <th>Working</th>
+            <th>OT</th>
+            <th>Status</th>
+            <th>Remarks</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="attendanceTable"></tbody>
+      </table>
+    </div>
+
+  </section>
+
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/storage.js"></script>
+<script src="js/attendance.js"></script>
+
+</body>
+</html>

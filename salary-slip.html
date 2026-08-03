@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Salary Slip - SELF HRMS</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar no-print">
+<div>
+<h1>SELF HRMS</h1>
+<p>Salary Slip</p>
+</div>
+</header>
+
+<main class="container">
+
+<div class="page-heading no-print">
+<h2>Salary Slip</h2>
+<p>View and print generated payroll</p>
+</div>
+
+<div class="actions-bar no-print">
+<a href="index.html" class="btn btn-secondary">← Dashboard</a>
+</div>
+
+<section class="form-card no-print">
+
+<div class="form-grid">
+
+<div class="field">
+<label>Employee *</label>
+<select id="employeeId">
+<option value="">Select Employee</option>
+</select>
+</div>
+
+<div class="field">
+<label>Month *</label>
+<input type="month" id="salaryMonth">
+</div>
+
+<div class="field">
+<label>&nbsp;</label>
+<button type="button"
+class="btn btn-primary"
+id="loadSlip">
+Load Salary Slip
+</button>
+</div>
+
+</div>
+
+</section>
+
+<section id="salarySlip" class="salary-slip">
+
+<div class="slip-header">
+
+<div id="slipLogo" class="slip-logo"></div>
+
+<div class="company-details">
+<h2 id="companyName">SELF HRMS</h2>
+<p id="companyAddress"></p>
+<p id="companyContact"></p>
+<p id="companyEmail"></p>
+</div>
+
+</div>
+
+<div class="slip-title">
+SALARY SLIP
+<div id="slipMonth"></div>
+</div>
+
+<div class="slip-section">
+
+<div>
+<strong>Employee Code:</strong>
+<span id="empCode"></span>
+</div>
+
+<div>
+<strong>Employee Name:</strong>
+<span id="empName"></span>
+</div>
+
+<div>
+<strong>Department:</strong>
+<span id="empDepartment"></span>
+</div>
+
+<div>
+<strong>Designation:</strong>
+<span id="empDesignation"></span>
+</div>
+
+<div>
+<strong>DOJ:</strong>
+<span id="empDOJ"></span>
+</div>
+
+<div>
+<strong>Bank:</strong>
+<span id="empBank"></span>
+</div>
+
+<div>
+<strong>A/C No:</strong>
+<span id="empAccount"></span>
+</div>
+
+<div>
+<strong>IFSC:</strong>
+<span id="empIFSC"></span>
+</div>
+
+<div>
+<strong>UAN:</strong>
+<span id="empUAN"></span>
+</div>
+
+<div>
+<strong>ESIC:</strong>
+<span id="empESIC"></span>
+</div>
+
+</div>
+
+<h3 class="slip-heading">Attendance Summary</h3>
+
+<div class="slip-section">
+
+<div><strong>P:</strong> <span id="attP">0</span></div>
+<div><strong>A:</strong> <span id="attA">0</span></div>
+<div><strong>HD:</strong> <span id="attHD">0</span></div>
+<div><strong>EL:</strong> <span id="attEL">0</span></div>
+<div><strong>CL:</strong> <span id="attCL">0</span></div>
+<div><strong>SL:</strong> <span id="attSL">0</span></div>
+<div><strong>WO:</strong> <span id="attWO">0</span></div>
+<div><strong>Holiday:</strong> <span id="attHoliday">0</span></div>
+<div><strong>Payable Days:</strong> <span id="payableDays">0</span></div>
+<div><strong>Working Hours:</strong> <span id="workingHours">0</span></div>
+<div><strong>OT Hours:</strong> <span id="otHours">0</span></div>
+
+</div>
+
+<h3 class="slip-heading">Salary Rate</h3>
+
+<div class="slip-section">
+
+<div><strong>Basic:</strong> ₹<span id="rateBasic">0.00</span></div>
+<div><strong>HRA:</strong> ₹<span id="rateHRA">0.00</span></div>
+<div><strong>Gross:</strong> ₹<span id="rateGross">0.00</span></div>
+<div><strong>Salary Divisor:</strong> <span id="rateDivisor"></span></div>
+<div><strong>Shift Hours:</strong> <span id="rateShift"></span></div>
+<div><strong>OT Rate:</strong> ₹<span id="rateOT">0.00</span></div>
+
+</div>
+
+<div class="salary-columns">
+
+<div>
+
+<h3 class="slip-heading">Earnings</h3>
+
+<table class="slip-table">
+
+<tr>
+<td>Earned Basic</td>
+<td id="earnedBasic">0.00</td>
+</tr>
+
+<tr>
+<td>Earned HRA</td>
+<td id="earnedHRA">0.00</td>
+</tr>
+
+<tr>
+<td>Overtime</td>
+<td id="otAmount">0.00</td>
+</tr>
+
+<tr>
+<td>Attendance Award</td>
+<td id="attendanceAward">0.00</td>
+</tr>
+
+<tr>
+<td>Bonus</td>
+<td id="bonus">0.00</td>
+</tr>
+
+<tr>
+<td>Incentive</td>
+<td id="incentive">0.00</td>
+</tr>
+
+<tr>
+<td>Arrear</td>
+<td id="arrear">0.00</td>
+</tr>
+
+<tr>
+<td>Other</td>
+<td id="otherEarning">0.00</td>
+</tr>
+
+<tr class="total-row">
+<td>Total Earnings</td>
+<td id="totalEarnings">0.00</td>
+</tr>
+
+</table>
+
+</div>
+
+<div>
+
+<h3 class="slip-heading">Deductions</h3>
+
+<table class="slip-table">
+
+<tr>
+<td>PF</td>
+<td id="pfAmount">0.00</td>
+</tr>
+
+<tr>
+<td>ESI</td>
+<td id="esiAmount">0.00</td>
+</tr>
+
+<tr>
+<td>LWF</td>
+<td id="lwfAmount">0.00</td>
+</tr>
+
+<tr>
+<td>Canteen</td>
+<td id="canteenAmount">0.00</td>
+</tr>
+
+<tr>
+<td>Advance</td>
+<td id="advance">0.00</td>
+</tr>
+
+<tr>
+<td>Loan</td>
+<td id="loan">0.00</td>
+</tr>
+
+<tr>
+<td>Fine</td>
+<td id="fine">0.00</td>
+</tr>
+
+<tr>
+<td>Other</td>
+<td id="otherDeduction">0.00</td>
+</tr>
+
+<tr class="total-row">
+<td>Total Deduction</td>
+<td id="totalDeduction">0.00</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="net-salary">
+Net Salary:
+₹ <span id="netSalary">0.00</span>
+</div>
+
+<div class="slip-footer">
+<p>This is a system generated salary slip.</p>
+</div>
+
+</section>
+
+<div class="form-actions no-print slip-actions">
+
+<button type="button"
+class="btn btn-primary"
+id="printSlip">
+Print / PDF
+</button>
+
+</div>
+
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/storage.js"></script>
+<script src="js/salary-slip.js"></script>
+
+</body>
+</html>
