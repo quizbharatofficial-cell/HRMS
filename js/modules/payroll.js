@@ -1089,3 +1089,43 @@ document.addEventListener("DOMContentLoaded", () => {
           item.netSalary;
 
      
+
+        payrollStatus.value =
+          item.status || "Draft";
+
+        remarks.value =
+          item.remarks || "";
+
+        saveBtn.textContent =
+          "Update Payroll";
+
+        message.textContent =
+          "Editing Payroll.";
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      }
+
+    }
+  );
+
+
+  search.addEventListener(
+    "input",
+    renderPayroll
+  );
+
+
+  cancelBtn.addEventListener(
+    "click",
+    resetForm
+  );
+
+
+  loadEmployees();
+  setCurrentMonth();
+  renderPayroll();
+
+});
