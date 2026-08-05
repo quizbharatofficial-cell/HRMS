@@ -833,6 +833,30 @@ document.addEventListener("DOMContentLoaded", () => {
         totalEarnings:
           num(totalEarnings.value),
 
+        pfMode:
+          document.getElementById("pfMode")?.value || "Auto",
+
+        esiMode:
+          document.getElementById("esiMode")?.value || "Auto",
+
+        lwfMode:
+          document.getElementById("lwfMode")?.value || "Auto",
+
+        canteenMode:
+          document.getElementById("canteenMode")?.value || "Auto",
+
+        advanceMode:
+          document.getElementById("advanceMode")?.value || "Manual",
+
+        loanMode:
+          document.getElementById("loanMode")?.value || "Manual",
+
+        fineMode:
+          document.getElementById("fineMode")?.value || "Manual",
+
+        otherMode:
+          document.getElementById("otherMode")?.value || "Manual",
+
         pfDeduction:
           num(pfDeduction.value),
 
@@ -1057,6 +1081,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         totalEarnings.value =
           item.totalEarnings;
+
+        const savedModes = {
+          pfMode: item.pfMode || "Auto",
+          esiMode: item.esiMode || "Auto",
+          lwfMode: item.lwfMode || "Auto",
+          canteenMode: item.canteenMode || "Auto",
+          advanceMode: item.advanceMode || "Manual",
+          loanMode: item.loanMode || "Manual",
+          fineMode: item.fineMode || "Manual",
+          otherMode: item.otherMode || "Manual"
+        };
+
+        Object.entries(savedModes).forEach(([id, value]) => {
+          const field = document.getElementById(id);
+          if (field) field.value = value;
+        });
 
         pfDeduction.value =
           item.pfDeduction;

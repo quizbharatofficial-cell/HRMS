@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setText(
       "slipPaidDays",
-      number(payroll.paidDays)
+      number(payroll.payableDays ?? payroll.paidDays)
     );
 
     setText(
@@ -464,7 +464,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setText(
       "slipAttendanceSalary",
       money(
-        payroll.attendanceSalary
+        number(payroll.earnedBasic) +
+        number(payroll.earnedHra)
       )
     );
 
@@ -496,7 +497,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setText(
       "slipGross",
       money(
-        payroll.grossEarnings
+        payroll.totalEarnings
       )
     );
 
