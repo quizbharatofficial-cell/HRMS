@@ -10,31 +10,44 @@ document.addEventListener("DOMContentLoaded", () => {
   const recordId = $("recordId");
   const payrollMonth = $("payrollMonth");
   const employee = $("employee");
-  const monthlySalary = $("monthlySalary");
   const salaryDivisor = $("salaryDivisor");
+  const payableDays = $("payableDays");
+
+  const basicSalary = $("basicSalary");
+  const hra = $("hra");
+  const monthlyGross = $("monthlyGross");
 
   const presentDays = $("presentDays");
+  const absentDays = $("absentDays");
   const halfDays = $("halfDays");
   const paidLeave = $("paidLeave");
   const unpaidLeave = $("unpaidLeave");
-  const absentDays = $("absentDays");
   const weeklyOff = $("weeklyOff");
   const holidayDays = $("holidayDays");
-  const paidDays = $("paidDays");
 
+  const shiftHours = $("shiftHours");
   const otHours = $("otHours");
+  const otMultiplier = $("otMultiplier");
   const otRate = $("otRate");
   const otAmount = $("otAmount");
 
-  const perDaySalary = $("perDaySalary");
-  const attendanceSalary = $("attendanceSalary");
-  const otherEarnings = $("otherEarnings");
+  const earnedBasic = $("earnedBasic");
+  const earnedHra = $("earnedHra");
+
+  const award = $("award");
   const bonus = $("bonus");
-  const grossEarnings = $("grossEarnings");
+  const incentive = $("incentive");
+  const arrear = $("arrear");
+  const otherEarnings = $("otherEarnings");
+  const totalEarnings = $("totalEarnings");
 
   const pfDeduction = $("pfDeduction");
   const esiDeduction = $("esiDeduction");
+  const lwfDeduction = $("lwfDeduction");
+  const canteenDeduction = $("canteenDeduction");
   const advanceDeduction = $("advanceDeduction");
+  const loanDeduction = $("loanDeduction");
+  const fineDeduction = $("fineDeduction");
   const otherDeduction = $("otherDeduction");
   const totalDeduction = $("totalDeduction");
 
@@ -45,57 +58,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const calculateBtn = $("calculateBtn");
   const saveBtn = $("saveBtn");
   const cancelBtn = $("cancelBtn");
-  const message = $("message");
   const search = $("payrollSearch");
   const table = $("payrollTable");
+  const message = $("message");
 
 
   function getData(key) {
     try {
       return JSON.parse(localStorage.getItem(key)) || [];
-    } catch {
+    } catch (error) {
+      console.error(error);
       return [];
     }
   }
 
 
-  function saveData(data) {
+  function savePayroll(data) {
     localStorage.setItem(
       PAYROLL_KEY,
       JSON.stringify(data)
     );
-  }
-
-
-  function uid() {
-    if (crypto?.randomUUID) {
-      return crypto.randomUUID();
-    }
-
-    return Date.now().toString(36) +
-      Math.random().toString(36).slice(2);
-  }
-
-
-  function num(value) {
-    return Number(value) || 0;
-  }
-
-
-  function money(value) {
-    return Math.round(
-      (num(value) + Number.EPSILON) * 100
-    ) / 100;
-  }
-
-
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
   }
 
 
@@ -110,6 +92,43 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+  function num(value) {
+    return Number(value) || 0;
+  }
+
+
+  function round(value) {
+    return Math.round(
+      (num(value) + Number.EPSILON) * 100
+    ) / 100;
+  }
+
+
+  function uid() {
+    if (
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+    ) {
+      return crypto.randomUUID();
+    }
+
+    return (
+      Date.now().toString(36) +
+      Math.random().toString(36).slice(2)
+    );
+  }
+
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
   function getEmployee(id) {
     return getEmployees().find(
       item => String(item.id) === String(id)
@@ -117,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  function employeeName(id) {
+  function getEmployeeName(id) {
     const item = getEmployee(id);
 
     if (!item) return "-";
@@ -161,46 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  function clearSummary() {
-
-    [
-      presentDays,
-      halfDays,
-      paidLeave,
-      unpaidLeave,
-      absentDays,
-      weeklyOff,
-      holidayDays,
-      paidDays,
-      otHours,
-      otAmount,
-      perDaySalary,
-      attendanceSalary,
-      grossEarnings,
-      totalDeduction,
-      netSalary
-    ].forEach(field => {
-      field.value = "0";
-    });
-  }
-
-
-  function loadEmployeeSalary() {
-
-    const item =
-      getEmployee(employee.value);
-
-    monthlySalary.value =
-      item ? num(item.monthlySalary) : 0;
-
-    clearSummary();
-  }
-
-
   function attendanceSummary() {
-
-    const month = payrollMonth.value;
-    const employeeId = employee.value;
 
     const summary = {
       P: 0,
@@ -209,21 +189,22 @@ document.addEventListener("DOMContentLoaded", () => {
       PL: 0,
       UL: 0,
       WO: 0,
-      H: 0,
-      OT: 0
+      H: 0
     };
 
-
-    if (!month || !employeeId) {
+    if (
+      !payrollMonth.value ||
+      !employee.value
+    ) {
       return summary;
     }
-
 
     getData(ATTENDANCE_KEY)
       .filter(item =>
         String(item.employee) ===
-          String(employeeId) &&
-        String(item.date || "").startsWith(month)
+          String(employee.value) &&
+        String(item.date || "")
+          .startsWith(payrollMonth.value)
       )
       .forEach(item => {
 
@@ -233,147 +214,236 @@ document.addEventListener("DOMContentLoaded", () => {
             item.status
           )
         ) {
-          summary[item.status] += 1;
+          summary[item.status]++;
         }
 
-        /*
-          OT comes directly from the manually
-          entered Attendance OT Hours.
-        */
-        summary.OT += num(item.otHours);
       });
-
 
     return summary;
   }
 
 
-  function calculatePayroll() {
-
-    if (!payrollMonth.value) {
-      message.textContent =
-        "Please select Payroll Month.";
-      return false;
-    }
-
-    if (!employee.value) {
-      message.textContent =
-        "Please select Employee.";
-      return false;
-    }
-
-
-    const divisor =
-      num(salaryDivisor.value);
-
-    if (divisor <= 0) {
-      message.textContent =
-        "Salary Divisor must be greater than zero.";
-      return false;
-    }
-
-
-    const salary =
-      num(monthlySalary.value);
+  function loadAttendance() {
 
     const summary =
       attendanceSummary();
 
-
     presentDays.value = summary.P;
+    absentDays.value = summary.A;
     halfDays.value = summary.HD;
     paidLeave.value = summary.PL;
     unpaidLeave.value = summary.UL;
-    absentDays.value = summary.A;
     weeklyOff.value = summary.WO;
     holidayDays.value = summary.H;
 
-    otHours.value =
-      money(summary.OT);
-
-
     /*
-      Payroll rule:
-      P  = 1 paid day
-      HD = 0.5 paid day
-      PL = 1 paid day
-      WO = 1 paid day
-      H  = 1 paid day
+      Attendance suggests payable days only.
 
-      A and UL are not paid.
+      OT is intentionally NOT imported
+      from attendance.
     */
-    const payableDays =
+    payableDays.value = round(
       summary.P +
       (summary.HD * 0.5) +
       summary.PL +
       summary.WO +
-      summary.H;
+      summary.H
+    );
+  }
 
 
-    paidDays.value =
-      money(payableDays);
+  function loadEmployeeSalary() {
+
+    const emp =
+      getEmployee(employee.value);
+
+    /*
+      Existing Employee Master currently
+      stores Monthly Salary as one value.
+
+      For now it is loaded as Basic.
+      HRA remains configurable manually.
+
+      Later Salary Structure Master can
+      supply Basic/HRA separately.
+    */
+    basicSalary.value =
+      emp ? num(emp.monthlySalary) : 0;
+
+    hra.value = 0;
+
+    loadAttendance();
+    calculatePayroll(false);
+  }
 
 
-    const dayRate =
-      salary / divisor;
+  function validate() {
 
-    perDaySalary.value =
-      money(dayRate);
+    if (!payrollMonth.value) {
+      return "Payroll Month is required.";
+    }
+
+    if (!employee.value) {
+      return "Please select Employee.";
+    }
+
+    if (num(salaryDivisor.value) <= 0) {
+      return "Salary Divisor must be greater than 0.";
+    }
+
+    if (num(shiftHours.value) <= 0) {
+      return "Shift Hours must be greater than 0.";
+    }
+
+    if (num(payableDays.value) < 0) {
+      return "Payable Days cannot be negative.";
+    }
+
+    if (num(otHours.value) < 0) {
+      return "OT Hours cannot be negative.";
+    }
+
+    if (num(otMultiplier.value) < 0) {
+      return "OT Multiplier cannot be negative.";
+    }
+
+    return "";
+  }
+
+
+  function calculatePayroll(showMessage = true) {
+
+    const divisor =
+      num(salaryDivisor.value);
+
+    const shift =
+      num(shiftHours.value);
+
+    if (divisor <= 0 || shift <= 0) {
+
+      monthlyGross.value =
+        round(
+          num(basicSalary.value) +
+          num(hra.value)
+        );
+
+      earnedBasic.value = 0;
+      earnedHra.value = 0;
+      otRate.value = 0;
+      otAmount.value = 0;
+      totalEarnings.value = 0;
+      totalDeduction.value = 0;
+      netSalary.value = 0;
+
+      return false;
+    }
+
+
+    const basic =
+      num(basicSalary.value);
+
+    const hraAmount =
+      num(hra.value);
+
+    const gross =
+      basic + hraAmount;
+
+    const days =
+      num(payableDays.value);
+
+    const multiplier =
+      num(otMultiplier.value);
+
+    const manualOTHours =
+      num(otHours.value);
+
+
+    monthlyGross.value =
+      round(gross);
 
 
     /*
-      Salary is capped at the configured
-      monthly salary so excess paid days
-      cannot increase base monthly salary.
+      Earned Basic =
+      Basic / Salary Divisor × Payable Days
+
+      Earned HRA =
+      HRA / Salary Divisor × Payable Days
     */
-    const baseAttendanceSalary =
-      Math.min(
-        salary,
-        dayRate * payableDays
-      );
+
+    const calculatedEarnedBasic =
+      (basic / divisor) * days;
+
+    const calculatedEarnedHra =
+      (hraAmount / divisor) * days;
 
 
-    attendanceSalary.value =
-      money(baseAttendanceSalary);
+    earnedBasic.value =
+      round(calculatedEarnedBasic);
+
+    earnedHra.value =
+      round(calculatedEarnedHra);
 
 
-    const calculatedOT =
-      summary.OT * num(otRate.value);
+    /*
+      OT Rate =
+      Gross / Salary Divisor / Shift Hours
+      × OT Multiplier
+    */
+
+    const calculatedOtRate =
+      (gross / divisor / shift) *
+      multiplier;
+
+    const calculatedOtAmount =
+      calculatedOtRate *
+      manualOTHours;
+
+
+    otRate.value =
+      round(calculatedOtRate);
 
     otAmount.value =
-      money(calculatedOT);
+      round(calculatedOtAmount);
 
 
-    const gross =
-      baseAttendanceSalary +
-      calculatedOT +
-      num(otherEarnings.value) +
-      num(bonus.value);
+    const earnings =
+      calculatedEarnedBasic +
+      calculatedEarnedHra +
+      calculatedOtAmount +
+      num(award.value) +
+      num(bonus.value) +
+      num(incentive.value) +
+      num(arrear.value) +
+      num(otherEarnings.value);
 
 
-    grossEarnings.value =
-      money(gross);
+    totalEarnings.value =
+      round(earnings);
 
 
     const deductions =
       num(pfDeduction.value) +
       num(esiDeduction.value) +
+      num(lwfDeduction.value) +
+      num(canteenDeduction.value) +
       num(advanceDeduction.value) +
+      num(loanDeduction.value) +
+      num(fineDeduction.value) +
       num(otherDeduction.value);
 
 
     totalDeduction.value =
-      money(deductions);
+      round(deductions);
 
 
     netSalary.value =
-      money(
-        Math.max(0, gross - deductions)
-      );
+      round(earnings - deductions);
 
 
-    message.textContent =
-      "Payroll calculated successfully.";
+    if (showMessage) {
+      message.textContent =
+        "Payroll calculated successfully.";
+    }
 
     return true;
   }
@@ -388,53 +458,86 @@ document.addEventListener("DOMContentLoaded", () => {
     setCurrentMonth();
 
     salaryDivisor.value = "26";
+    payableDays.value = "0";
 
+    basicSalary.value = "0";
+    hra.value = "0";
+    monthlyGross.value = "0";
+
+    presentDays.value = "0";
+    absentDays.value = "0";
+    halfDays.value = "0";
+    paidLeave.value = "0";
+    unpaidLeave.value = "0";
+    weeklyOff.value = "0";
+    holidayDays.value = "0";
+
+    shiftHours.value = "";
+    otHours.value = "0";
+    otMultiplier.value = "1";
     otRate.value = "0";
-    otherEarnings.value = "0";
+    otAmount.value = "0";
+
+    earnedBasic.value = "0";
+    earnedHra.value = "0";
+
+    award.value = "0";
     bonus.value = "0";
+    incentive.value = "0";
+    arrear.value = "0";
+    otherEarnings.value = "0";
+    totalEarnings.value = "0";
 
     pfDeduction.value = "0";
     esiDeduction.value = "0";
+    lwfDeduction.value = "0";
+    canteenDeduction.value = "0";
     advanceDeduction.value = "0";
+    loanDeduction.value = "0";
+    fineDeduction.value = "0";
     otherDeduction.value = "0";
 
+    totalDeduction.value = "0";
+    netSalary.value = "0";
+
     payrollStatus.value = "Draft";
-
-    monthlySalary.value = "0";
-
-    clearSummary();
-
-    loadEmployees();
 
     saveBtn.textContent =
       "Save Payroll";
 
     message.textContent = "";
+
+    loadEmployees();
   }
 
 
   function renderPayroll() {
 
     const query =
-      search.value.trim().toLowerCase();
+      search.value
+        .trim()
+        .toLowerCase();
 
     const records =
       getData(PAYROLL_KEY)
         .filter(item => {
 
-          return [
+          const text = [
             item.month,
-            employeeName(item.employee),
+            getEmployeeName(item.employee),
             item.status
           ]
             .join(" ")
-            .toLowerCase()
-            .includes(query);
+            .toLowerCase();
+
+          return text.includes(query);
         })
         .sort(
           (a, b) =>
             String(b.month)
-              .localeCompare(String(a.month))
+              .localeCompare(
+                String(a.month)
+              )
         );
 
 
@@ -445,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       table.innerHTML = `
         <tr>
-          <td colspan="9" style="text-align:center;">
+          <td colspan="11" style="text-align:center;">
             No payroll records found.
           </td>
         </tr>
@@ -466,15 +569,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         <td>
           ${escapeHTML(
-            employeeName(item.employee)
+            getEmployeeName(item.employee)
           )}
         </td>
 
-        <td>${escapeHTML(item.paidDays)}</td>
+        <td>${escapeHTML(item.payableDays)}</td>
+
+        <td>${escapeHTML(item.monthlyGross)}</td>
 
         <td>${escapeHTML(item.otHours)}</td>
 
-        <td>${escapeHTML(item.grossEarnings)}</td>
+        <td>${escapeHTML(item.otAmount)}</td>
+
+        <td>${escapeHTML(item.totalEarnings)}</td>
 
         <td>${escapeHTML(item.totalDeduction)}</td>
 
@@ -512,7 +619,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   calculateBtn.addEventListener(
     "click",
-    calculatePayroll
+    () => {
+
+      const error = validate();
+
+      if (error) {
+        message.textContent = error;
+        return;
+      }
+
+      calculatePayroll();
+
+    }
   );
 
 
@@ -524,28 +642,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   payrollMonth.addEventListener(
     "change",
-    clearSummary
+    () => {
+
+      loadAttendance();
+      calculatePayroll(false);
+
+    }
   );
 
 
+  /*
+    Instant recalculation
+  */
+
   [
     salaryDivisor,
-    otRate,
-    otherEarnings,
+    payableDays,
+    basicSalary,
+    hra,
+    shiftHours,
+    otHours,
+    otMultiplier,
+    award,
     bonus,
+    incentive,
+    arrear,
+    otherEarnings,
     pfDeduction,
     esiDeduction,
+    lwfDeduction,
+    canteenDeduction,
     advanceDeduction,
+    loanDeduction,
+    fineDeduction,
     otherDeduction
   ].forEach(field => {
 
     field.addEventListener(
       "input",
-      () => {
-        if (employee.value && payrollMonth.value) {
-          calculatePayroll();
-        }
-      }
+      () => calculatePayroll(false)
     );
 
   });
@@ -557,10 +692,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       event.preventDefault();
 
+      const error =
+        validate();
 
-      if (!calculatePayroll()) {
+      if (error) {
+        message.textContent = error;
         return;
       }
+
+
+      calculatePayroll(false);
 
 
       const records =
@@ -570,10 +711,15 @@ document.addEventListener("DOMContentLoaded", () => {
         recordId.value;
 
 
+      /*
+        Employee + Payroll Month must be unique.
+      */
+
       const duplicate =
         records.some(item =>
 
-          item.month === payrollMonth.value &&
+          item.month ===
+            payrollMonth.value &&
 
           String(item.employee) ===
             String(employee.value) &&
@@ -612,14 +758,26 @@ document.addEventListener("DOMContentLoaded", () => {
         employee:
           employee.value,
 
-        monthlySalary:
-          num(monthlySalary.value),
-
         salaryDivisor:
           num(salaryDivisor.value),
 
+        payableDays:
+          num(payableDays.value),
+
+        basicSalary:
+          num(basicSalary.value),
+
+        hra:
+          num(hra.value),
+
+        monthlyGross:
+          num(monthlyGross.value),
+
         presentDays:
           num(presentDays.value),
+
+        absentDays:
+          num(absentDays.value),
 
         halfDays:
           num(halfDays.value),
@@ -630,20 +788,20 @@ document.addEventListener("DOMContentLoaded", () => {
         unpaidLeave:
           num(unpaidLeave.value),
 
-        absentDays:
-          num(absentDays.value),
-
         weeklyOff:
           num(weeklyOff.value),
 
         holidayDays:
           num(holidayDays.value),
 
-        paidDays:
-          num(paidDays.value),
+        shiftHours:
+          num(shiftHours.value),
 
         otHours:
           num(otHours.value),
+
+        otMultiplier:
+          num(otMultiplier.value),
 
         otRate:
           num(otRate.value),
@@ -651,20 +809,29 @@ document.addEventListener("DOMContentLoaded", () => {
         otAmount:
           num(otAmount.value),
 
-        perDaySalary:
-          num(perDaySalary.value),
+        earnedBasic:
+          num(earnedBasic.value),
 
-        attendanceSalary:
-          num(attendanceSalary.value),
+        earnedHra:
+          num(earnedHra.value),
 
-        otherEarnings:
-          num(otherEarnings.value),
+        award:
+          num(award.value),
 
         bonus:
           num(bonus.value),
 
-        grossEarnings:
-          num(grossEarnings.value),
+        incentive:
+          num(incentive.value),
+
+        arrear:
+          num(arrear.value),
+
+        otherEarnings:
+          num(otherEarnings.value),
+
+        totalEarnings:
+          num(totalEarnings.value),
 
         pfDeduction:
           num(pfDeduction.value),
@@ -672,8 +839,20 @@ document.addEventListener("DOMContentLoaded", () => {
         esiDeduction:
           num(esiDeduction.value),
 
+        lwfDeduction:
+          num(lwfDeduction.value),
+
+        canteenDeduction:
+          num(canteenDeduction.value),
+
         advanceDeduction:
           num(advanceDeduction.value),
+
+        loanDeduction:
+          num(loanDeduction.value),
+
+        fineDeduction:
+          num(fineDeduction.value),
 
         otherDeduction:
           num(otherDeduction.value),
@@ -724,7 +903,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
 
-      saveData(records);
+      savePayroll(records);
 
       renderPayroll();
 
@@ -763,18 +942,20 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!item) return;
 
 
-      if (button.dataset.action === "delete") {
+      if (
+        button.dataset.action ===
+        "delete"
+      ) {
 
-        if (
-          !confirm(
-            `Delete payroll for ${employeeName(item.employee)} - ${item.month}?`
-          )
-        ) {
-          return;
-        }
+        const confirmed =
+          confirm(
+            `Delete payroll for ${getEmployeeName(item.employee)} - ${item.month}?`
+          );
+
+        if (!confirmed) return;
 
 
-        saveData(
+        savePayroll(
           records.filter(
             record =>
               String(record.id) !==
@@ -788,46 +969,94 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
 
-      if (button.dataset.action === "edit") {
+      if (
+        button.dataset.action ===
+        "edit"
+      ) {
 
         recordId.value = item.id;
-        payrollMonth.value = item.month;
 
-        loadEmployees(item.employee);
+        payrollMonth.value =
+          item.month;
 
-        monthlySalary.value =
-          item.monthlySalary;
+        loadEmployees(
+          item.employee
+        );
 
         salaryDivisor.value =
-          item.salaryDivisor || 26;
+          item.salaryDivisor;
 
-        presentDays.value = item.presentDays;
-        halfDays.value = item.halfDays;
-        paidLeave.value = item.paidLeave;
-        unpaidLeave.value = item.unpaidLeave;
-        absentDays.value = item.absentDays;
-        weeklyOff.value = item.weeklyOff;
-        holidayDays.value = item.holidayDays;
-        paidDays.value = item.paidDays;
+        payableDays.value =
+          item.payableDays;
 
-        otHours.value = item.otHours;
-        otRate.value = item.otRate;
-        otAmount.value = item.otAmount;
+        basicSalary.value =
+          item.basicSalary;
 
-        perDaySalary.value =
-          item.perDaySalary;
+        hra.value =
+          item.hra;
 
-        attendanceSalary.value =
-          item.attendanceSalary;
+        monthlyGross.value =
+          item.monthlyGross;
 
-        otherEarnings.value =
-          item.otherEarnings;
+        presentDays.value =
+          item.presentDays;
+
+        absentDays.value =
+          item.absentDays;
+
+        halfDays.value =
+          item.halfDays;
+
+        paidLeave.value =
+          item.paidLeave;
+
+        unpaidLeave.value =
+          item.unpaidLeave;
+
+        weeklyOff.value =
+          item.weeklyOff;
+
+        holidayDays.value =
+          item.holidayDays;
+
+        shiftHours.value =
+          item.shiftHours;
+
+        otHours.value =
+          item.otHours;
+
+        otMultiplier.value =
+          item.otMultiplier;
+
+        otRate.value =
+          item.otRate;
+
+        otAmount.value =
+          item.otAmount;
+
+        earnedBasic.value =
+          item.earnedBasic;
+
+        earnedHra.value =
+          item.earnedHra;
+
+        award.value =
+          item.award;
 
         bonus.value =
           item.bonus;
 
-        grossEarnings.value =
-          item.grossEarnings;
+        incentive.value =
+          item.incentive;
+
+        arrear.value =
+          item.arrear;
+
+        otherEarnings.value =
+          item.otherEarnings;
+
+        totalEarnings.value =
+          item.totalEarnings;
 
         pfDeduction.value =
           item.pfDeduction;
@@ -835,8 +1064,20 @@ document.addEventListener("DOMContentLoaded", () => {
         esiDeduction.value =
           item.esiDeduction;
 
+        lwfDeduction.value =
+          item.lwfDeduction;
+
+        canteenDeduction.value =
+          item.canteenDeduction;
+
         advanceDeduction.value =
           item.advanceDeduction;
+
+        loanDeduction.value =
+          item.loanDeduction;
+
+        fineDeduction.value =
+          item.fineDeduction;
 
         otherDeduction.value =
           item.otherDeduction;
@@ -847,43 +1088,4 @@ document.addEventListener("DOMContentLoaded", () => {
         netSalary.value =
           item.netSalary;
 
-        payrollStatus.value =
-          item.status || "Draft";
-
-        remarks.value =
-          item.remarks || "";
-
-        saveBtn.textContent =
-          "Update Payroll";
-
-        message.textContent =
-          "Editing Payroll.";
-
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-      }
-
-    }
-  );
-
-
-  search.addEventListener(
-    "input",
-    renderPayroll
-  );
-
-
-  cancelBtn.addEventListener(
-    "click",
-    resetForm
-  );
-
-
-  loadEmployees();
-  setCurrentMonth();
-  clearSummary();
-  renderPayroll();
-
-});
+     
