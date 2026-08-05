@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>SELF HRMS - Dashboard</title>
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -22,6 +24,9 @@
     <h2>Dashboard</h2>
     <p>Employee, attendance and payroll overview</p>
   </section>
+
+
+  <!-- DASHBOARD SUMMARY -->
 
   <section class="dashboard-grid">
 
@@ -77,19 +82,60 @@
 
   </section>
 
+
+  <!-- MASTER MODULES -->
+
   <section class="module-section">
 
-    <h2>Modules</h2>
+    <h2>Masters</h2>
 
     <div class="module-grid">
 
-      <a href="employees.html" class="module-card">
-        <span class="module-icon">👥</span>
-        <strong>Employees</strong>
+      <a href="masters/branch.html" class="module-card">
+        <span class="module-icon">🏢</span>
+        <strong>Branch Master</strong>
       </a>
 
-      <a href="attendance.html" class="module-card">
+      <a href="masters/department.html" class="module-card">
+        <span class="module-icon">🏬</span>
+        <strong>Department Master</strong>
+      </a>
+
+      <a href="masters/designation.html" class="module-card">
+        <span class="module-icon">💼</span>
+        <strong>Designation Master</strong>
+      </a>
+
+      <a href="masters/shift.html" class="module-card">
         <span class="module-icon">🕒</span>
+        <strong>Shift Master</strong>
+      </a>
+
+      <a href="masters/salary-component.html" class="module-card">
+        <span class="module-icon">₹</span>
+        <strong>Salary Components</strong>
+      </a>
+
+      <a href="masters/employee.html" class="module-card">
+        <span class="module-icon">👤</span>
+        <strong>Employee Master</strong>
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- ATTENDANCE & PAYROLL -->
+
+  <section class="module-section">
+
+    <h2>Attendance & Payroll</h2>
+
+    <div class="module-grid">
+
+      <a href="attendance/attendance.html" class="module-card">
+        <span class="module-icon">✅</span>
         <strong>Attendance</strong>
       </a>
 
@@ -108,15 +154,28 @@
         <strong>Holiday</strong>
       </a>
 
-      <a href="payroll.html" class="module-card">
+      <a href="payroll/payroll.html" class="module-card">
         <span class="module-icon">💰</span>
-        <strong>Payroll</strong>
+        <strong>Payroll Processing</strong>
       </a>
 
-      <a href="salary-slip.html" class="module-card">
+      <a href="payroll/payslip.html" class="module-card">
         <span class="module-icon">📄</span>
         <strong>Salary Slip</strong>
       </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- OTHER MODULES -->
+
+  <section class="module-section">
+
+    <h2>Reports & System</h2>
+
+    <div class="module-grid">
 
       <a href="history.html" class="module-card">
         <span class="module-icon">🗂️</span>
@@ -138,6 +197,7 @@
   </section>
 
 </main>
+
 
 <script src="js/storage.js"></script>
 <script src="js/dashboard.js"></script>
